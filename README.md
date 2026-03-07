@@ -47,19 +47,23 @@ Dentro do Scriptable:
 4. cole o código abaixo
 
 ```javascript
-const OLHO_MAGICO = "https://raw.githubusercontent.com/mkhyur/OLHO-MAGICO/refs/heads/main/scanner.js"
+const OLHO_MAGICO = "https://raw.githubusercontent.com/mkhyur/OLHO-MAGICO/main/scanner.js"
 
 let req = new Request(OLHO_MAGICO)
 let code = await req.loadString()
 
-if (!code || code.startsWith("404")) {
-  let a = new Alert()
-  a.title = "Erro"
-  a.message = "Nao foi possivel baixar o scanner."
-  a.addAction("OK")
-  await a.present()
+if (!code || code.includes("404")) {
+  let alert = new Alert()
+  alert.title = "Erro"
+  alert.message = "Nao foi possivel baixar o scanner."
+  alert.addAction("OK")
+  await alert.present()
 } else {
-  eval(code + "\nmain()")
+
+  const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+  const run = new AsyncFunction(code + "\n if (typeof main === 'function') await main();")
+
+  await run()
 }
 ```
 
